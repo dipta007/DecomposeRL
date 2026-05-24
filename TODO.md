@@ -1,0 +1,6 @@
+- [ ] remove dipta007
+- [ ] remove any personal identifiable information
+- [ ] remove any sensitive information
+- [ ] remove comments that are extra
+- [ ] remove any code that is not being used
+- [ ] add readme

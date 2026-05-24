@@ -1,0 +1,39 @@
+[project]
+name = "decomposerl"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+  "accelerate>=1.11.0",
+  "datasets>=4.3.0",
+  "datasketch>=1.9.0",
+  "ddgs>=9.10.0",
+  "ipykernel>=7.1.0",
+  "jsonlines>=4.0.0",
+  "liger-kernel>=0.7.0",
+  "matplotlib>=3.10.7",
+  "minicheck[llm]",
+  "openai>=2.6.1",
+  "peft>=0.18.0",
+  "plotly>=6.7.0",
+  "py-markdown-table>=1.3.0",
+  "pydpp>=0.2.1",
+  "retry>=0.9.2",
+  "scikit-learn>=1.7.2",
+  "scipy>=1.16.3",
+  "seaborn>=0.13.2",
+  "streamlit>=1.56.0",
+  "submodlib-py>=0.0.3",
+  "tenacity>=9.1.4",
+  "unsloth==2026.1.1",
+  "unsloth-zoo==2026.1.1",
+  "vendi-score>=0.0.3",
+  "vllm==0.13.0",
+  "wandb>=0.22.3",
+  "wikipedia>=1.4.0",
+]
+
+
+[tool.uv.sources]
+minicheck = { git = "https://github.com/Liyan06/MiniCheck.git", rev = "main" }
