@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <meta name="title" content="DecomposeRL: Learning to Ask Useful, Informative, and Diverse Questions for Semi-Supervised, Traceable Claim Verification">
+  <meta name="description" content="DecomposeRL trains a decomposer as an RL policy with multi-faceted rewards to produce traceable fact-verification traces, outperforming baselines on 11 benchmarks with only 5k training claims.">
+  <meta name="keywords" content="fact verification, claim decomposition, reinforcement learning, GRPO, semi-supervised, NLP, traceable AI">
+  <meta name="author" content="Shubhashis Roy Dipta, Ankur Padia, Francis Ferraro">
+  <meta name="robots" content="index, follow">
+
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="DecomposeRL">
+  <meta property="og:title" content="DecomposeRL: Traceable Claim Verification via RL-Trained Decomposition">
+  <meta property="og:description" content="DecomposeRL trains a decomposer as an RL policy with multi-faceted rewards to produce traceable fact-verification traces, outperforming baselines on 11 benchmarks.">
+  <meta property="og:image" content="static/images/teaser.png">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@iamdipta007">
+  <meta name="twitter:creator" content="@iamdipta007">
+  <meta name="twitter:title" content="DecomposeRL: Traceable Claim Verification via RL-Trained Decomposition">
+  <meta name="twitter:description" content="RL-trained decomposer with multi-faceted rewards for traceable fact verification. Outperforms 7B baselines, matches 32B+ models on 11 benchmarks.">
+  <meta name="twitter:image" content="static/images/teaser.png">
+
+  <meta name="citation_title" content="DecomposeRL: Learning to Ask Useful, Informative, and Diverse Questions for Semi-Supervised, Traceable Claim Verification">
+  <meta name="citation_author" content="Roy Dipta, Shubhashis">
+  <meta name="citation_author" content="Padia, Ankur">
+  <meta name="citation_author" content="Ferraro, Francis">
+  <meta name="citation_publication_date" content="2025">
+  <meta name="citation_pdf_url" content="https://arxiv.org/">
+
+  <meta name="theme-color" content="#4f46e5">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://ajax.googleapis.com">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+
+  <title>DecomposeRL: Traceable Claim Verification via RL-Trained Decomposition</title>
+
+  <link rel="icon" type="image/x-icon" href="static/images/favicon.ico">
+  <link rel="apple-touch-icon" href="static/images/favicon.ico">
+
+  <link rel="stylesheet" href="static/css/bulma.min.css">
+  <link rel="stylesheet" href="static/css/index.css">
+
+  <link rel="preload" href="static/css/bulma-carousel.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="static/css/bulma-slider.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="static/css/fontawesome.all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+  <noscript>
+    <link rel="stylesheet" href="static/css/bulma-carousel.min.css">
+    <link rel="stylesheet" href="static/css/bulma-slider.min.css">
+    <link rel="stylesheet" href="static/css/fontawesome.all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  </noscript>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <script defer src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="static/js/fontawesome.all.min.js"></script>
+  <script defer src="static/js/bulma-carousel.min.js"></script>
+  <script defer src="static/js/bulma-slider.min.js"></script>
+  <script defer src="static/js/index.js"></script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ScholarlyArticle",
+    "headline": "DecomposeRL: Learning to Ask Useful, Informative, and Diverse Questions for Semi-Supervised, Traceable Claim Verification",
+    "description": "We propose DecomposeRL, an RL framework that trains a decomposer with multi-faceted rewards for traceable fact verification across 11 benchmarks.",
+    "author": [
+      {
+        "@type": "Person",
+        "name": "Shubhashis Roy Dipta",
+        "affiliation": { "@type": "Organization", "name": "University of Maryland, Baltimore County" }
+      },
+      {
+        "@type": "Person",
+        "name": "Ankur Padia",
+        "affiliation": { "@type": "Organization", "name": "University of Maryland, Baltimore County" }
+      },
+      {
+        "@type": "Person",
+        "name": "Francis Ferraro",
+        "affiliation": { "@type": "Organization", "name": "University of Maryland, Baltimore County" }
+      }
+    ],
+    "datePublished": "2025",
+    "url": "https://dipta007.github.io/DecomposeRL",
+    "keywords": ["Fact Verification", "Claim Decomposition", "Reinforcement Learning", "GRPO", "Semi-Supervised"],
+    "isAccessibleForFree": true
+  }
+  </script>
+
+  <style>
+    .stat-card {
+      background: #f8fafc;
+      border-radius: 12px;
+      padding: 1.5rem;
+      text-align: center;
+      border: 1px solid #e2e8f0;
+      height: 100%;
+    }
+    .stat-number {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: #4f46e5;
+    }
+    .stat-label {
+      color: #64748b;
+      font-size: 0.9rem;
+    }
+    @media screen and (max-width: 768px) {
+      .stat-card { padding: 1rem; margin-bottom: 0.5rem; }
+      .stat-number { font-size: 1.8rem; }
+      .stat-label { font-size: 0.8rem; }
+    }
+    .table-responsive {
+      width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .comparison-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0;
+      min-width: 500px;
+    }
+    .comparison-table th, .comparison-table td {
+      padding: 0.75rem 1rem;
+      text-align: left;
+      border-bottom: 1px solid #e2e8f0;
+      white-space: nowrap;
+    }
+    .comparison-table th {
+      background: #f1f5f9;
+      font-weight: 600;
+    }
+    .comparison-table tr:hover {
+      background: #f8fafc;
+    }
+    .comparison-table a {
+      color: #4f46e5;
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+    .comparison-table a:hover {
+      color: #4338ca;
+      text-decoration: underline;
+    }
+    @media screen and (max-width: 768px) {
+      .comparison-table { min-width: 400px; font-size: 0.85rem; }
+      .comparison-table th, .comparison-table td { padding: 0.5rem 0.75rem; }
+    }
+    .model-badge {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+    .badge-indigo {
+      background: #312e81;
+      color: #ffffff;
+    }
+    .highlight-box {
+      background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
+      color: white;
+      padding: 1.5rem;
+      border-radius: 12px;
+      margin: 1rem 0;
+    }
+    .method-step {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      margin: 1rem 0;
+    }
+    .step-number {
+      background: #4f46e5;
+      color: white;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .reward-tag {
+      display: inline-block;
+      padding: 0.15rem 0.5rem;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin: 0.15rem;
+    }
+    .reward-prog { background: #dbeafe; color: #1e40af; }
+    .reward-judge { background: #fef3c7; color: #92400e; }
+    .reward-set { background: #e0e7ff; color: #3730a3; }
+    .fig-responsive {
+      display: block;
+      width: 100%;
+      max-width: 100%;
+      height: auto;
+      cursor: zoom-in;
+      box-sizing: border-box;
+    }
+    .lightbox-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: rgba(0,0,0,0.85);
+      z-index: 10000;
+      justify-content: center;
+      align-items: center;
+      cursor: zoom-out;
+    }
+    .lightbox-overlay.active {
+      display: flex;
+    }
+    .lightbox-overlay img {
+      max-width: 95vw;
+      max-height: 95vh;
+      object-fit: contain;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+
+  <button class="scroll-to-top" onclick="scrollToTop()" title="Scroll to top" aria-label="Scroll to top">
+    <i class="fas fa-chevron-up"></i>
+  </button>
+
+  <!-- More Works Dropdown -->
+  <div class="more-works-container">
+    <button class="more-works-btn" onclick="toggleMoreWorks()" title="View More Works">
+      <i class="fas fa-flask"></i>
+      More Works
+      <i class="fas fa-chevron-down dropdown-arrow"></i>
+    </button>
+    <div class="more-works-dropdown" id="moreWorksDropdown">
+      <div class="dropdown-header">
+        <h4>More Works</h4>
+        <button class="close-btn" onclick="toggleMoreWorks()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="works-list">
+        <a href="https://dipta007.github.io/GanitLLM/" class="work-item" target="_blank">
+          <div class="work-info">
+            <h5>GanitLLM: Difficulty-Aware Bengali Mathematical Reasoning through Curriculum-GRPO</h5>
+            <span class="work-venue">ACL 2026 (Findings)</span>
+          </div>
+          <i class="fas fa-external-link-alt"></i>
+        </a>
+        <a href="https://dipta007.github.io/VC-Inspector/" class="work-item" target="_blank">
+          <div class="work-info">
+            <h5>VC-Inspector: Advancing Reference-free Evaluation of Video Captions with Factual Analysis</h5>
+            <span class="work-venue">ACL 2026</span>
+          </div>
+          <i class="fas fa-external-link-alt"></i>
+        </a>
+        <a href="https://dipta007.github.io/De-Presuppose/" class="work-item" target="_blank">
+          <div class="work-info">
+            <h5>If We May De-Presuppose: Robustly Verifying Claims through Presupposition-Free Question Decomposition</h5>
+            <span class="work-venue">*SEM 2025</span>
+          </div>
+          <i class="fas fa-external-link-alt"></i>
+        </a>
+        <a href="https://dipta007.github.io/Q2E/" class="work-item" target="_blank">
+          <div class="work-info">
+            <h5>Q2E: Query-to-Event Decomposition for Zero-Shot Multilingual Text-to-Video Retrieval</h5>
+            <span class="work-venue">AACL 2025</span>
+          </div>
+          <i class="fas fa-external-link-alt"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sticky Navigation -->
+  <nav class="sticky-nav" id="stickyNav">
+    <div class="nav-inner">
+      <a href="#abstract" class="nav-link">Abstract</a>
+      <a href="#method" class="nav-link">Method</a>
+      <a href="#results" class="nav-link">Results</a>
+      <a href="#resources" class="nav-link">Resources</a>
+      <a href="#BibTeX" class="nav-link">BibTeX</a>
+    </div>
+  </nav>
+
+  <main id="main-content">
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-body" style="padding-top: 3rem;">
+      <div class="container is-max-desktop">
+        <div class="columns is-centered">
+          <div class="column has-text-centered">
+            <h1 class="title is-1 publication-title">
+              <span style="font-variant: small-caps;">DecomposeRL</span>: Learning to Ask Useful, Informative, and Diverse Questions for Semi-Supervised, Traceable Claim Verification
+            </h1>
+            <div class="is-size-5 publication-authors">
+              <span class="author-block">
+                <a href="https://roydipta.com/" target="_blank">Shubhashis Roy Dipta</a>,
+              </span>
+              <span class="author-block">
+                <a href="https://padiaankur.github.io/" target="_blank">Ankur Padia</a>,
+              </span>
+              <span class="author-block">
+                <a href="https://userpages.cs.umbc.edu/ferraro/" target="_blank">Francis Ferraro</a>
+              </span>
+            </div>
+
+            <div class="is-size-5 publication-authors">
+              <span class="author-block">University of Maryland, Baltimore County</span>
+            </div>
+
+            <div class="column has-text-centered">
+              <div class="publication-links">
+                <span class="link-block">
+                  <a href="https://arxiv.org/" target="_blank" class="external-link button is-normal is-rounded is-dark">
+                    <span class="icon"><i class="ai ai-arxiv"></i></span>
+                    <span>arXiv</span>
+                  </a>
+                </span>
+
+                <span class="link-block">
+                  <a href="https://github.com/dipta007/decomposerl" target="_blank" class="external-link button is-normal is-rounded is-dark">
+                    <span class="icon"><i class="fab fa-github"></i></span>
+                    <span>Code</span>
+                  </a>
+                </span>
+
+                <span class="link-block">
+                  <a href="https://huggingface.co/dipta007/decomposeRL-7b" target="_blank" class="external-link button is-normal is-rounded is-dark">
+                    <span>&#129303; Model</span>
+                  </a>
+                </span>
+
+                <span class="link-block">
+                  <a href="https://huggingface.co/datasets/dipta007/DecomposeRL" target="_blank" class="external-link button is-normal is-rounded is-dark">
+                    <span class="icon"><i class="fas fa-database"></i></span>
+                    <span>Dataset</span>
+                  </a>
+                </span>
+
+                <span class="link-block">
+                  <a href="https://huggingface.co/collections/dipta007/decomposerl" target="_blank" class="external-link button is-normal is-rounded is-dark">
+                    <span>&#129303; Collection</span>
+                  </a>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TL;DR -->
+  <section class="hero is-small">
+    <div class="hero-body" style="padding-top: 0.5em; padding-bottom: 0.5em;">
+      <div class="container is-max-desktop">
+        <p class="has-text-centered" style="font-size: 1.05rem; color: #475569; max-width: 800px; margin: 0 auto;">
+          <strong>TL;DR:</strong> We treat claim decomposition as an RL policy optimization problem with seven multi-faceted rewards that define what makes a sub-question <em>useful</em>, <em>informative</em>, and <em>diverse</em> &mdash; closing the accuracy&ndash;traceability gap in fact verification with only 5k training claims.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Key Results -->
+  <section class="hero is-small">
+    <div class="hero-body">
+      <h2 class="title is-3 has-text-centered">Key Results</h2>
+      <div class="container is-max-desktop">
+        <div class="columns is-multiline is-centered is-mobile">
+          <div class="column is-6-mobile is-6-tablet is-3-desktop">
+            <div class="stat-card">
+              <div class="stat-number">86.3</div>
+              <div class="stat-label">Avg Balanced Accuracy on 9 In-Domain Benchmarks</div>
+            </div>
+          </div>
+          <div class="column is-6-mobile is-6-tablet is-3-desktop">
+            <div class="stat-card">
+              <div class="stat-number">11</div>
+              <div class="stat-label">Fact-Verification Benchmarks Evaluated</div>
+            </div>
+          </div>
+          <div class="column is-6-mobile is-6-tablet is-3-desktop">
+            <div class="stat-card">
+              <div class="stat-number">96.5%</div>
+              <div class="stat-label">Less Training Data vs. Strongest Baseline</div>
+            </div>
+          </div>
+          <div class="column is-6-mobile is-6-tablet is-3-desktop">
+            <div class="stat-card">
+              <div class="stat-number">7B</div>
+              <div class="stat-label">Policy Matching 32B &amp; Frontier Models</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Teaser Figure -->
+  <section class="hero is-small">
+    <div class="hero-body">
+      <div class="container is-max-desktop">
+        <div class="has-text-centered">
+          <img src="static/images/teaser.png" alt="DecomposeRL overview: Three reward axes filter candidate sub-questions — useful (necessity), informative (atomicity, answerability, correctness), and diverse (non-redundant) — composing the surviving questions into an auditable verdict." class="fig-responsive" style="max-width: 70%; max-height: 500px; object-fit: contain; background: white; margin: 0 auto;" onclick="openLightbox(this)">
+          <h2 class="subtitle has-text-centered" style="margin-top: 1rem;">
+            <strong>What makes a sub-question useful, informative, and diverse?</strong> DecomposeRL filters candidate sub-questions along three reward axes &mdash; <em>useful</em> (its answer can change the verdict), <em>informative</em> (atomic, answerable, and grounded), <em>diverse</em> (non-redundant) &mdash; and composes the surviving questions into an auditable verdict.
+          </h2>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Abstract -->
+  <section class="section hero is-light" id="abstract">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-four-fifths">
+          <h2 class="title is-3">Abstract</h2>
+          <div class="content has-text-justified">
+            <p>
+              Fact verification splits between <em>end-to-end classifiers</em> that are accurate but opaque, without inspectable traces, and <em>decomposition-based methods</em> that produce inspectable traces but lag on harder benchmarks. We argue the gap between accuracy and obtaining inspectable traces exists because the decomposer is never <em>trained</em> to optimize what makes a decomposition useful.
+            </p>
+            <p>
+              We propose <strong>DecomposeRL</strong> to close the gap by treating the decomposer as a reinforcement-learning policy with a reward ensemble that defines decomposition quality. DecomposeRL adapts GRPO with a proposed multi-faceted reward stack, complemented by a semi-supervised training mode that scores unlabeled claims with per-prompt majority-vote pseudo-labels. DecomposeRL overcomes prohibitively large training time for GRPO with a multi-layer curation pipeline to distill existing fact-verification corpora into a small, learning-signal-dense subset.
+            </p>
+            <p>
+              Experiments on <strong>11 fact-verification benchmarks</strong> spanning biomedical, political, scientific, and general-domain claims demonstrate that DecomposeRL outperforms strong prompted and fine-tuned baselines while producing structured, traceable verification outputs, using only <strong>5k training data</strong> compared to 14k for the strongest fine-tuned baseline.
+            </p>
+          </div>
+
+          <h3 class="title is-4" style="margin-top: 1.5rem;">Key Contributions</h3>
+          <div class="content has-text-justified">
+            <ol>
+              <li><strong>Multi-faceted reward ensemble</strong> with two complementary formulations: per-question quality via a leave-one-out necessity matrix, and question-set-level contribution via a joint multiplicative reward.</li>
+              <li><strong>Semi-supervised training</strong> via a self-consistency reward that replaces gold verdicts with per-prompt majority-vote pseudo-labels, enabling training when annotated data is scarce.</li>
+              <li><strong>Data curation pipeline</strong> that distills 155k raw claims into a 96.5% smaller, learning-signal-dense training set of 5,464 claims.</li>
+              <li><strong>State-of-the-art results</strong> across 11 benchmarks &mdash; a 7B RL-trained policy matching or exceeding 32B and frontier models while producing traceable verification traces.</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Method -->
+  <section class="section" id="method">
+    <div class="container is-max-desktop">
+      <h2 class="title is-3 has-text-centered">Our Approach</h2>
+
+      <div class="columns" style="margin-top: 2rem;">
+        <div class="column is-6">
+          <h3 class="title is-4">Data Curation Pipeline</h3>
+          <p>A multi-stage funnel that distills 155k raw claims from 14 corpora into 5,464 learning-signal-dense training claims:</p>
+
+          <div class="method-step">
+            <div class="step-number">1</div>
+            <div>
+              <strong>Source Aggregation:</strong> Pool 14 public fact-verification corpora into a single (claim, evidence, label) set
+            </div>
+          </div>
+
+          <div class="method-step">
+            <div class="step-number">2</div>
+            <div>
+              <strong>Rule &amp; NER Filtering:</strong> Remove structurally unsuitable rows (too short/long evidence, &lt;2 named entities)
+            </div>
+          </div>
+
+          <div class="method-step">
+            <div class="step-number">3</div>
+            <div>
+              <strong>Difficulty Filtering:</strong> Keep only claims in the informative difficulty band (0.3 &le; confidence &le; 0.8), dropping trivial and likely mislabeled claims
+            </div>
+          </div>
+
+          <div class="method-step">
+            <div class="step-number">4</div>
+            <div>
+              <strong>Dedup &amp; Decontamination:</strong> MinHash + semantic dedup, three-pronged decontamination against all 11 test sets
+            </div>
+          </div>
+
+          <div class="method-step">
+            <div class="step-number">5</div>
+            <div>
+              <strong>Diversity Selection:</strong> Submodular Facility-Location maximization with label-balanced, source-proportional budgets
+            </div>
+          </div>
+        </div>
+
+        <div class="column is-6">
+          <h3 class="title is-4">Reward Stack (7 Rewards)</h3>
+          <p>Multi-faceted rewards that capture what makes a decomposition useful:</p>
+
+          <div style="margin-top: 1rem;">
+            <p style="margin-bottom: 0.5rem;"><strong>Programmatic Anchors</strong> (no judge calls):</p>
+            <ul>
+              <li><span class="reward-tag reward-prog">R<sub>fmt</sub></span> Format &mdash; well-formed XML, Q&rarr;A alternation, valid verdict</li>
+              <li><span class="reward-tag reward-prog">R<sub>qc</sub></span> Question count &mdash; triangular kernel on ratio to silver decomposition</li>
+              <li><span class="reward-tag reward-prog">R<sub>div</sub></span> Diversity &mdash; MMR penalty over question embeddings</li>
+            </ul>
+          </div>
+
+          <div style="margin-top: 1rem;">
+            <p style="margin-bottom: 0.5rem;"><strong>Per-Question Quality</strong> (judge-based, multiplicative):</p>
+            <ul>
+              <li><span class="reward-tag reward-judge">R<sub>ans</sub></span> Answerability &mdash; is the question answerable from evidence?</li>
+              <li><span class="reward-tag reward-judge">R<sub>atom</sub></span> Atomicity &mdash; 5-criterion binary checklist</li>
+              <li><span class="reward-tag reward-judge">R<sub>corr</sub></span> Correctness &mdash; is the answer faithful to the document?</li>
+            </ul>
+          </div>
+
+          <div style="margin-top: 1rem;">
+            <p style="margin-bottom: 0.5rem;"><strong>Set-Level Signals</strong> (outcome-grounded):</p>
+            <ul>
+              <li><span class="reward-tag reward-set">R<sub>ver</sub></span> Verification &mdash; does the policy's verdict match the gold label?</li>
+              <li><span class="reward-tag reward-set">R<sub>cov</sub></span> Coverage &mdash; can the answers alone reconstruct the gold verdict?</li>
+              <li><span class="reward-tag reward-set">R<sub>nec</sub></span> Necessity &mdash; leave-one-out: does removing a question change the verdict?</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Method Figure -->
+      <div class="has-text-centered" style="margin-top: 2rem;">
+        <img src="static/images/method.png" alt="DecomposeRL reward stack and semi-supervised training overview" loading="lazy" class="fig-responsive" style="border: 1px solid #cbd5e1; border-radius: 4px;" onclick="openLightbox(this)">
+        <p class="has-text-centered" style="margin-top: 0.5rem; color: #64748b;">
+          The DecomposeRL reward stack and semi-supervised training. (A) Seven rewards across three categories feed GRPO. (B) A supervision rate splits claims into labeled and unlabeled paths, enabling semi-supervised training with self-consistency pseudo-labels.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Results -->
+  <section class="section hero is-light" id="results">
+    <div class="container is-max-desktop">
+      <h2 class="title is-3 has-text-centered">Results</h2>
+
+      <div class="content">
+
+        <!-- 1. All 7B methods table -->
+        <h3 class="title is-4">All 7B Methods Comparison</h3>
+        <p>Balanced accuracy (%) of all 7B baselines and DecomposeRL across 9 in-domain datasets plus 2 out-of-domain benchmarks:</p>
+
+        <div class="table-responsive">
+          <table class="comparison-table">
+            <tr>
+              <th>Method</th>
+              <th>FEVER</th>
+              <th>ClaimDec.</th>
+              <th>HoVer</th>
+              <th>FEVEROUS</th>
+              <th>WiCE</th>
+              <th>Ex-FEVER</th>
+              <th>PubHealth</th>
+              <th>PubMedCl.</th>
+              <th>FoolMe2x</th>
+              <th>Micro</th>
+              <th>Avg</th>
+              <th>CoverBench</th>
+              <th>LLMAggreFact</th>
+            </tr>
+            <tr style="background: #e0e7ff;">
+              <td><strong>DecomposeRL-7B</strong> <span class="model-badge badge-indigo">Ours</span></td>
+              <td><strong>74.1</strong></td>
+              <td><strong>98.6</strong></td>
+              <td><strong>76.4</strong></td>
+              <td><u>93.1</u></td>
+              <td><u>86.5</u></td>
+              <td><strong>87.6</strong></td>
+              <td><u>87.5</u></td>
+              <td><strong>85.5</strong></td>
+              <td><strong>87.7</strong></td>
+              <td><strong>84.4</strong></td>
+              <td><strong>86.3</strong></td>
+              <td><strong>62.5</strong></td>
+              <td>77.0</td>
+            </tr>
+            <tr>
+              <td>Simple (7B)</td>
+              <td><u>72.7</u></td>
+              <td>94.9</td>
+              <td>71.0</td>
+              <td><strong>93.5</strong></td>
+              <td>83.2</td>
+              <td>82.7</td>
+              <td>84.2</td>
+              <td><u>84.1</u></td>
+              <td><u>86.6</u></td>
+              <td><u>82.0</u></td>
+              <td><u>83.7</u></td>
+              <td>52.5</td>
+              <td>74.9</td>
+            </tr>
+            <tr>
+              <td>CoT (7B)</td>
+              <td>70.0</td>
+              <td>95.5</td>
+              <td>70.9</td>
+              <td>92.2</td>
+              <td>85.6</td>
+              <td><u>83.8</u></td>
+              <td>83.8</td>
+              <td>83.2</td>
+              <td>85.0</td>
+              <td>81.8</td>
+              <td>83.3</td>
+              <td><u>59.7</u></td>
+              <td><u>77.2</u></td>
+            </tr>
+            <tr>
+              <td>DecomP (7B)</td>
+              <td>65.5</td>
+              <td>95.3</td>
+              <td>69.0</td>
+              <td>91.9</td>
+              <td>85.0</td>
+              <td>78.0</td>
+              <td>85.7</td>
+              <td>82.5</td>
+              <td>84.1</td>
+              <td>79.3</td>
+              <td>81.9</td>
+              <td>55.3</td>
+              <td>76.2</td>
+            </tr>
+            <tr>
+              <td>HiSS (7B)</td>
+              <td>67.7</td>
+              <td>92.8</td>
+              <td>70.2</td>
+              <td>92.7</td>
+              <td>83.6</td>
+              <td>82.4</td>
+              <td>79.2</td>
+              <td>77.0</td>
+              <td>84.5</td>
+              <td>80.7</td>
+              <td>81.1</td>
+              <td>58.3</td>
+              <td>75.7</td>
+            </tr>
+            <tr>
+              <td>MiniCheck</td>
+              <td>69.9</td>
+              <td>77.5</td>
+              <td><u>73.8</u></td>
+              <td>89.2</td>
+              <td><strong>87.2</strong></td>
+              <td>82.9</td>
+              <td>76.3</td>
+              <td>83.0</td>
+              <td>84.5</td>
+              <td>81.9</td>
+              <td>80.5</td>
+              <td>54.6</td>
+              <td><strong>80.3</strong></td>
+            </tr>
+            <tr>
+              <td>Self-Ask (7B)</td>
+              <td>66.5</td>
+              <td>92.7</td>
+              <td>66.9</td>
+              <td>91.9</td>
+              <td>82.5</td>
+              <td>71.7</td>
+              <td>84.2</td>
+              <td>82.6</td>
+              <td>82.8</td>
+              <td>76.7</td>
+              <td>80.2</td>
+              <td>56.9</td>
+              <td>77.1</td>
+            </tr>
+            <tr>
+              <td>FOLK (7B)</td>
+              <td>65.0</td>
+              <td>90.8</td>
+              <td>68.2</td>
+              <td>91.0</td>
+              <td>83.6</td>
+              <td>80.2</td>
+              <td>80.5</td>
+              <td>77.8</td>
+              <td>83.1</td>
+              <td>79.0</td>
+              <td>80.0</td>
+              <td>53.8</td>
+              <td>75.6</td>
+            </tr>
+            <tr>
+              <td>QACheck (7B)</td>
+              <td>65.4</td>
+              <td><u>97.3</u></td>
+              <td>59.1</td>
+              <td>92.7</td>
+              <td>83.0</td>
+              <td>65.4</td>
+              <td><strong>91.0</strong></td>
+              <td>78.0</td>
+              <td>81.6</td>
+              <td>73.1</td>
+              <td>79.3</td>
+              <td>52.8</td>
+              <td>68.9</td>
+            </tr>
+            <tr>
+              <td>Chen-2024 (7B)</td>
+              <td>65.4</td>
+              <td>91.1</td>
+              <td>65.3</td>
+              <td>87.9</td>
+              <td>79.6</td>
+              <td>73.3</td>
+              <td>83.3</td>
+              <td>79.2</td>
+              <td>82.3</td>
+              <td>75.7</td>
+              <td>78.6</td>
+              <td>56.8</td>
+              <td>70.2</td>
+            </tr>
+            <tr>
+              <td>ProgramFC (7B)</td>
+              <td>60.5</td>
+              <td>92.9</td>
+              <td>65.9</td>
+              <td>88.2</td>
+              <td>85.4</td>
+              <td>74.6</td>
+              <td>77.4</td>
+              <td>74.3</td>
+              <td>76.9</td>
+              <td>75.2</td>
+              <td>77.3</td>
+              <td>53.1</td>
+              <td>73.5</td>
+            </tr>
+            <tr>
+              <td>ClaimDecomp (7B)</td>
+              <td>65.2</td>
+              <td>78.9</td>
+              <td>63.5</td>
+              <td>85.5</td>
+              <td>79.2</td>
+              <td>71.6</td>
+              <td>76.0</td>
+              <td>77.6</td>
+              <td>79.4</td>
+              <td>73.3</td>
+              <td>75.2</td>
+              <td>52.1</td>
+              <td>71.6</td>
+            </tr>
+          </table>
+        </div>
+        <p style="margin-top: 0.5rem; color: #64748b;">
+          <i class="fas fa-info-circle"></i> <strong>Bold</strong> = best in column; <u>underline</u> = second best. DecomposeRL-7B leads on 8 of 11 in-domain columns and CoverBench (OOD).
+        </p>
+
+        <!-- 2. Best-of-all scales table -->
+        <h3 class="title is-4" style="margin-top: 2.5rem;">DecomposeRL (7B) vs. Best at Every Scale</h3>
+        <p>Best baseline at each model scale (3B / 7B / 14B / 32B) plus the best frontier system (GPT-4.1-mini):</p>
+
+        <div class="table-responsive">
+          <table class="comparison-table">
+            <tr>
+              <th>Method</th>
+              <th>FEVER</th>
+              <th>ClaimDec.</th>
+              <th>HoVer</th>
+              <th>FEVEROUS</th>
+              <th>WiCE</th>
+              <th>Ex-FEVER</th>
+              <th>PubHealth</th>
+              <th>PubMedCl.</th>
+              <th>FoolMe2x</th>
+              <th>Micro</th>
+              <th>Avg</th>
+              <th>CoverBench</th>
+              <th>LLMAggreFact</th>
+            </tr>
+            <tr>
+              <td>Best @ 3B (Simple)</td>
+              <td>71.5</td>
+              <td>94.0</td>
+              <td>63.7</td>
+              <td>89.0</td>
+              <td>73.7</td>
+              <td>82.0</td>
+              <td>81.2</td>
+              <td>78.7</td>
+              <td>79.3</td>
+              <td>77.6</td>
+              <td>79.2</td>
+              <td>51.3</td>
+              <td>74.0</td>
+            </tr>
+            <tr>
+              <td>Best @ 7B (Simple)</td>
+              <td><u>72.7</u></td>
+              <td>94.9</td>
+              <td>71.0</td>
+              <td><u>93.5</u></td>
+              <td>83.2</td>
+              <td>82.7</td>
+              <td>84.2</td>
+              <td>84.1</td>
+              <td>86.6</td>
+              <td>82.0</td>
+              <td>83.7</td>
+              <td>52.5</td>
+              <td>74.9</td>
+            </tr>
+            <tr>
+              <td>Best @ 14B (DecomP)</td>
+              <td>71.1</td>
+              <td><strong>100.0</strong></td>
+              <td>75.0</td>
+              <td>90.9</td>
+              <td><u>89.0</u></td>
+              <td>83.4</td>
+              <td>86.7</td>
+              <td>85.3</td>
+              <td>88.3</td>
+              <td>83.1</td>
+              <td>85.5</td>
+              <td>61.3</td>
+              <td><u>79.3</u></td>
+            </tr>
+            <tr>
+              <td>Best @ 32B (DecomP)</td>
+              <td>68.6</td>
+              <td><u>100.0</u></td>
+              <td>76.2</td>
+              <td>93.2</td>
+              <td><strong>91.3</strong></td>
+              <td>85.1</td>
+              <td><u>86.8</u></td>
+              <td><strong>87.4</strong></td>
+              <td><u>90.3</u></td>
+              <td><u>84.7</u></td>
+              <td><u>86.5</u></td>
+              <td><u>64.2</u></td>
+              <td><strong>79.4</strong></td>
+            </tr>
+            <tr>
+              <td>Best Frontier (GPT-4.1-mini)</td>
+              <td>70.9</td>
+              <td>100.0</td>
+              <td><strong>76.7</strong></td>
+              <td><strong>93.5</strong></td>
+              <td>87.2</td>
+              <td><strong>88.3</strong></td>
+              <td>86.4</td>
+              <td><u>87.1</u></td>
+              <td><strong>91.1</strong></td>
+              <td><strong>85.8</strong></td>
+              <td><strong>86.8</strong></td>
+              <td><strong>68.6</strong></td>
+              <td>78.9</td>
+            </tr>
+            <tr style="background: #e0e7ff;">
+              <td><strong>DecomposeRL-7B</strong> <span class="model-badge badge-indigo">Ours</span></td>
+              <td><strong>74.1</strong></td>
+              <td>98.6</td>
+              <td><u>76.4</u></td>
+              <td>93.1</td>
+              <td>86.5</td>
+              <td><u>87.6</u></td>
+              <td><strong>87.5</strong></td>
+              <td>85.5</td>
+              <td>87.7</td>
+              <td>84.4</td>
+              <td>86.3</td>
+              <td>62.5</td>
+              <td>77.0</td>
+            </tr>
+          </table>
+        </div>
+        <p style="margin-top: 0.5rem; color: #64748b;">
+          <i class="fas fa-info-circle"></i> <strong>Bold</strong> = best in column; <u>underline</u> = second best. DecomposeRL (7B) outperforms all 7B baselines by +2.6 Avg points and is competitive with 32B and frontier models.
+        </p>
+
+        <!-- 3. All 7B bar chart -->
+        <h3 class="title is-4" style="margin-top: 2.5rem;">All 7B Methods (Plot)</h3>
+        <div style="overflow: hidden; width: 100%;">
+          <img src="static/images/main_results_7b.png" alt="Balanced accuracy comparison of all 7B methods across 9 in-domain benchmarks" loading="lazy" class="fig-responsive" style="border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);" onclick="openLightbox(this)">
+          <p class="has-text-centered" style="margin-top: 0.5rem; color: #64748b;">
+            Balanced accuracy of all 7B methods across 9 in-domain benchmarks. DecomposeRL consistently outperforms all prompted and fine-tuned 7B baselines.
+          </p>
+        </div>
+
+        <!-- 4. Model scaling figure -->
+        <h3 class="title is-4" style="margin-top: 2.5rem;">Model Scaling</h3>
+        <div style="overflow: hidden; width: 100%;">
+          <img src="static/images/model_scaling.png" alt="Performance scaling comparison across model sizes: 3B, 7B, 14B, 32B, and frontier" loading="lazy" class="fig-responsive" style="border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);" onclick="openLightbox(this)">
+          <p class="has-text-centered" style="margin-top: 0.5rem; color: #64748b;">
+            DecomposeRL at 7B closes the gap with significantly larger models and frontier systems.
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Resources -->
+  <section class="section" id="resources">
+    <div class="container is-max-desktop">
+      <h2 class="title is-3 has-text-centered">Resources</h2>
+
+      <div class="columns" style="margin-top: 2rem;">
+        <div class="column is-6">
+          <h3 class="title is-4">Model</h3>
+          <p>The trained DecomposeRL-7B policy is available on HuggingFace:</p>
+          <div class="highlight-box" style="margin-top: 1rem;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+              <div style="text-align: center;">
+                <div style="font-size: 1.5rem; font-weight: 700;">7B</div>
+                <div style="font-size: 0.8rem; opacity: 0.9;">Parameters</div>
+              </div>
+              <div style="text-align: center;">
+                <div style="font-size: 1.5rem; font-weight: 700;">GRPO</div>
+                <div style="font-size: 0.8rem; opacity: 0.9;">Training</div>
+              </div>
+              <div style="text-align: center;">
+                <div style="font-size: 1.5rem; font-weight: 700;">5.4k</div>
+                <div style="font-size: 0.8rem; opacity: 0.9;">Training Claims</div>
+              </div>
+            </div>
+            <a href="https://huggingface.co/dipta007/decomposeRL-7b" target="_blank" style="display: block; background: white; color: #4f46e5; padding: 0.75rem; border-radius: 8px; text-align: center; font-weight: 600; text-decoration: none;">
+              &#129303; Download Model
+            </a>
+          </div>
+        </div>
+
+        <div class="column is-6">
+          <h3 class="title is-4">Dataset &amp; Collection</h3>
+          <p>The curated training set and full collection of artifacts:</p>
+          <div style="margin-top: 1rem;">
+            <div class="highlight-box">
+              <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+                <div style="text-align: center;">
+                  <div style="font-size: 1.5rem; font-weight: 700;">14</div>
+                  <div style="font-size: 0.8rem; opacity: 0.9;">Source Corpora</div>
+                </div>
+                <div style="text-align: center;">
+                  <div style="font-size: 1.5rem; font-weight: 700;">5,464</div>
+                  <div style="font-size: 0.8rem; opacity: 0.9;">Curated Claims</div>
+                </div>
+                <div style="text-align: center;">
+                  <div style="font-size: 1.5rem; font-weight: 700;">11</div>
+                  <div style="font-size: 0.8rem; opacity: 0.9;">Test Benchmarks</div>
+                </div>
+              </div>
+              <div style="display: flex; gap: 0.5rem;">
+                <a href="https://huggingface.co/datasets/dipta007/DecomposeRL" target="_blank" style="display: block; flex: 1; background: white; color: #4f46e5; padding: 0.75rem; border-radius: 8px; text-align: center; font-weight: 600; text-decoration: none;">
+                  <i class="fas fa-database"></i> Dataset
+                </a>
+                <a href="https://huggingface.co/collections/dipta007/decomposerl" target="_blank" style="display: block; flex: 1; background: white; color: #4f46e5; padding: 0.75rem; border-radius: 8px; text-align: center; font-weight: 600; text-decoration: none;">
+                  &#129303; Collection
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BibTeX -->
+  <section class="section hero is-light" id="BibTeX">
+    <div class="container is-max-desktop content">
+      <div class="bibtex-header">
+        <h2 class="title">BibTeX</h2>
+        <button class="copy-bibtex-btn" onclick="copyBibTeX()" title="Copy BibTeX to clipboard">
+          <i class="fas fa-copy"></i>
+          <span class="copy-text">Copy</span>
+        </button>
+      </div>
+      <pre id="bibtex-code"><code>
+@article{dipta2025decomposerl,
+  title={DecomposeRL: Learning to Ask Useful, Informative, and Diverse
+         Questions for Semi-Supervised, Traceable Claim Verification},
+  author={Shubhashis Roy Dipta and Ankur Padia and Francis Ferraro},
+  year={2025},
+  url={https://arxiv.org/},
+}
+      </code></pre>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="columns is-centered">
+        <div class="column is-8">
+          <div class="content">
+            <p>
+              This page was built using the <a href="https://github.com/eliahuhorwitz/Academic-project-page-template" target="_blank">Academic Project Page Template</a>.
+              <br>
+              This website is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/" target="_blank">Creative Commons Attribution-ShareAlike 4.0 International License</a>.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  </main>
+
+<!-- Lightbox overlay -->
+<div class="lightbox-overlay" id="lightboxOverlay" onclick="closeLightbox()">
+  <img id="lightboxImg" src="" alt="">
+</div>
+<script>
+function openLightbox(el) {
+  var overlay = document.getElementById('lightboxOverlay');
+  document.getElementById('lightboxImg').src = el.src;
+  overlay.classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+function closeLightbox() {
+  var overlay = document.getElementById('lightboxOverlay');
+  overlay.classList.remove('active');
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeLightbox();
+});
+</script>
+
+<!-- Default Statcounter code for DecomposeRL
+https://dipta007.github.io/DecomposeRL -->
+<script type="text/javascript">
+var sc_project=13250203;
+var sc_invisible=1;
+var sc_security="b3242055";
+</script>
+<script type="text/javascript"
+src="https://www.statcounter.com/counter/counter.js"
+async></script>
+<noscript><div class="statcounter"><a title="Web Analytics
+Made Easy - Statcounter" href="https://statcounter.com/"
+target="_blank"><img class="statcounter"
+src="https://c.statcounter.com/13250203/0/b3242055/1/"
+alt="Web Analytics Made Easy - Statcounter"
+referrerPolicy="no-referrer-when-downgrade"></a></div></noscript>
+<!-- End of Statcounter Code -->
+
+</body>
+</html>
