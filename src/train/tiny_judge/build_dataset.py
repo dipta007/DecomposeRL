@@ -4,7 +4,7 @@
 Walks `.cache/<run>/<func>/`, applies a strict prompt-validity check against the
 current templates in `src.prompts`, dedups by text-hash, splits 80/10/10
 by claim/document hash, builds balanced variants, and pushes each subset to
-`dipta007/decomposeRL-tiny-judge` (private) one at a time so partial progress
+`anonymous/anonymous-tiny-judge` (private) one at a time so partial progress
 survives a crash.
 
 Usage:
@@ -42,7 +42,7 @@ from src.train.decomposerl.prompts import (
 logger = logging.getLogger("tiny_judge.build")
 
 JUDGE_MODEL_ID = "Qwen/Qwen3-32B"
-HUB_REPO = "dipta007/decomposeRL-tiny-judge"
+HUB_REPO = "anonymous/anonymous-tiny-judge"
 
 ATOMICITY_CRITERIA = (
     "is_question",

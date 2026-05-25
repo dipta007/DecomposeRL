@@ -1,9 +1,9 @@
 # DecomposeRL: Traceable Claim Verification via RL-Trained Decomposition
 
 [![Paper](https://img.shields.io/badge/arXiv-0000.00000-red)](https://arxiv.org/abs/0000.00000)
-[![Model](https://img.shields.io/badge/HuggingFace-Model-orange)](https://huggingface.co/dipta007/decomposeRL-7b)
-[![Dataset](https://img.shields.io/badge/HuggingFace-Dataset-yellow)](https://huggingface.co/datasets/dipta007/DecomposeRL)
-[![Collection](https://img.shields.io/badge/HuggingFace-Collection-blueviolet)](https://huggingface.co/collections/dipta007/decomposerl)
+[![Model](https://img.shields.io/badge/HuggingFace-Model-orange)](https://huggingface.co/anonymous/anonymous-model)
+[![Dataset](https://img.shields.io/badge/HuggingFace-Dataset-yellow)](https://huggingface.co/datasets/anonymous/anonymous-dataset)
+[![Collection](https://img.shields.io/badge/HuggingFace-Collection-blueviolet)](https://huggingface.co/collections/anonymous/anonymous-collection)
 [![Python 3.12](https://img.shields.io/badge/python-3.12-blue.svg)](https://www.python.org/downloads/)
 
 Official implementation of **"DecomposeRL: Traceable Claim Verification via RL-Trained Decomposition"**
@@ -43,7 +43,7 @@ Key contributions:
 ### Setup
 
 ```bash
-git clone https://github.com/dipta007/DecomposeRL.git
+git clone https://github.com/anonymous/anonymous-dataset.git
 cd DecomposeRL
 
 # Install uv (if not already installed)
@@ -59,16 +59,16 @@ The dataset is hosted on HuggingFace:
 
 | Name | Description |
 |------|-------------|
-| [dipta007/DecomposeRL](https://huggingface.co/datasets/dipta007/DecomposeRL) | Train + 11 test splits across 10 verification datasets |
+| [anonymous/anonymous-dataset](https://huggingface.co/datasets/anonymous/anonymous-dataset) | Train + 11 test splits across 10 verification datasets |
 
 ```python
 from datasets import load_dataset
 
 # Load training data
-train = load_dataset("dipta007/DecomposeRL", "5000", split="train")
+train = load_dataset("anonymous/anonymous-dataset", "5000", split="train")
 
 # Load a test split
-test = load_dataset("dipta007/DecomposeRL", "5000", split="test_pubmedclaim")
+test = load_dataset("anonymous/anonymous-dataset", "5000", split="test_pubmedclaim")
 ```
 
 Each example contains:
@@ -97,10 +97,10 @@ Each example contains:
 
 | Model | Base | HuggingFace |
 |-------|------|-------------|
-| DecomposeRL-7B | Qwen2.5-7B-Instruct | [dipta007/decomposeRL-7b](https://huggingface.co/dipta007/decomposeRL-7b) |
-| Tiny Judge (8 classifiers) | ModernBERT-large | [Collection](https://huggingface.co/collections/dipta007/decomposerl) |
+| DecomposeRL-7B | Qwen2.5-7B-Instruct | [anonymous/anonymous-model](https://huggingface.co/anonymous/anonymous-model) |
+| Tiny Judge (8 classifiers) | ModernBERT-large | [Collection](https://huggingface.co/collections/anonymous/anonymous-collection) |
 
-All models and resources are collected in the [HuggingFace Collection](https://huggingface.co/collections/dipta007/decomposerl).
+All models and resources are collected in the [HuggingFace Collection](https://huggingface.co/collections/anonymous/anonymous-collection).
 
 ## Usage
 
@@ -182,10 +182,10 @@ The LLM judge (Qwen3-32B) is accurate but slow. We distill it into small ModernB
 
 | Task | Model |
 |------|-------|
-| Atomicity (5 criteria) | [dipta007/atomicity-*-judge-balanced](https://huggingface.co/collections/dipta007/decomposerl) |
-| Question Answerable | [dipta007/question-judge-balanced](https://huggingface.co/dipta007/question-judge-balanced) |
-| Answer Correctness | [dipta007/answer-judge-balanced](https://huggingface.co/dipta007/answer-judge-balanced) |
-| Coverage | [dipta007/coverage-judge-balanced](https://huggingface.co/dipta007/coverage-judge-balanced) |
+| Atomicity (5 criteria) | [anonymous/atomicity-*-judge](https://huggingface.co/collections/anonymous/anonymous-collection) |
+| Question Answerable | [anonymous/question-judge](https://huggingface.co/anonymous/question-judge) |
+| Answer Correctness | [anonymous/answer-judge](https://huggingface.co/anonymous/answer-judge) |
+| Coverage | [anonymous/coverage-judge](https://huggingface.co/anonymous/coverage-judge) |
 
 **Use pre-trained tiny judges** for GRPO training (no judge server needed):
 
@@ -251,9 +251,9 @@ DecomposeRL/
 If you find this work useful, please cite our paper:
 
 ```bibtex
-@article{dipta2025decomposerl,
+@article{anonymous2025decomposerl,
   title={DecomposeRL: Traceable Claim Verification via RL-Trained Decomposition},
-  author={Shubhashis Roy Dipta and Ankur Padia and Francis Ferraro},
+  author={Anonymous},
   year={2025},
   eprint={0000.00000},
   archivePrefix={arXiv},
@@ -271,4 +271,4 @@ If you find this work useful, please cite our paper:
 
 ## Contact
 
-For questions or issues, please open a [GitHub issue](https://github.com/dipta007/DecomposeRL/issues).
+For questions or issues, please open a [GitHub issue](https://github.com/anonymous/anonymous-dataset/issues).

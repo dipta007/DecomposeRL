@@ -5,7 +5,7 @@ Trains on the balanced `train_balanced` split, validates on natural
 `validation`, evaluates on natural `test` and `test_balanced`. Best ckpt =
 highest macro-F1. LoRA adapters are merged into the base before push so
 consumers can use a plain `from_pretrained` without PEFT. Pushes to
-dipta007/{task}-judge-balanced (private).
+anonymous/{task}-judge-balanced (private).
 
 Backbone is `ENCODER_BACKBONE` from `_common.py` (currently Unsloth's
 ModernBERT-large). Unsloth's FastModel + 8-bit Adam + "unsloth"-mode

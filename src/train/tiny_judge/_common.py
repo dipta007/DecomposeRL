@@ -13,9 +13,9 @@ from dataclasses import dataclass
 
 import numpy as np
 
-DATASET_REPO = "dipta007/decomposeRL-tiny-judge"
-WANDB_ENTITY = "gcnssdvae"
-WANDB_PROJECT = "decomposeRL-judge"
+DATASET_REPO = "anonymous/anonymous-tiny-judge"
+WANDB_ENTITY = "anonymous"
+WANDB_PROJECT = "anonymous-judge"
 ENCODER_BACKBONE = "unsloth/ModernBERT-large"
 
 # Bump this when you change training recipe / data / hyperparams in a way you
@@ -54,7 +54,7 @@ class TaskConfig:
     name: str  # subset name in HF dataset and config name
     num_labels: int  # 1 for regression, K for K-way classification
     problem_type: str  # "single_label_classification" | "regression"
-    repo_short: str  # used to build dipta007/{repo_short}-judge[-suffix]
+    repo_short: str  # used to build {org}/{repo_short}-judge[-suffix]
     label_names: list  # human-readable; only used for logging classification metrics
 
 
@@ -106,8 +106,7 @@ ALL_TASK_NAMES = tuple(TASKS.keys())
 
 
 def repo_name_for(task: TaskConfig, suffix: str = "") -> str:
-    """`dipta007/{repo_short}-judge[-suffix]`."""
-    base = f"dipta007/{task.repo_short}-judge"
+    base = f"anonymous/{task.repo_short}-judge"
     return f"{base}-{suffix}" if suffix else base
 
 

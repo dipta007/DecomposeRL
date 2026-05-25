@@ -184,8 +184,8 @@ if __name__ == "__main__":
     RUN_NAME = args.run_name
     os.environ["WANDB_RUN_ID"] = RUN_NAME
     os.environ["WANDB_RESUME"] = "auto"
-    os.environ["WANDB_ENTITY"] = "gcnssdvae"
-    os.environ["WANDB_PROJECT"] = "DecompseRL"
+    os.environ["WANDB_ENTITY"] = "anonymous"
+    os.environ["WANDB_PROJECT"] = "anonymous-project"
     os.environ["WANDB_NAME"] = RUN_NAME
     os.environ["WANDB_TAGS"] = f"lora,unsloth,{args.model_name},grpo,{RUN_NAME}"
     log_configs(args)

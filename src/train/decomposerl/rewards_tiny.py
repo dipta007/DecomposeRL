@@ -20,14 +20,14 @@ from src.train.decomposerl.rewards_llm import (  # noqa: F401 — re-exported fo
 logger = logging.getLogger(__name__)
 
 JUDGE_MODELS: dict[str, str] = {
-    "atomicity_is_question": "dipta007/atomicity-is-question-judge-balanced",
-    "atomicity_single_focus": "dipta007/atomicity-single-focus-judge-balanced",
-    "atomicity_no_conjunctions": "dipta007/atomicity-no-conjunctions-judge-balanced",
-    "atomicity_verifiable": "dipta007/atomicity-verifiable-judge-balanced",
-    "atomicity_grounded": "dipta007/atomicity-grounded-judge-balanced",
-    "question_answerable": "dipta007/question-judge-balanced",
-    "answer_correctness": "dipta007/answer-judge-balanced",
-    "coverage": "dipta007/coverage-judge-balanced",
+    "atomicity_is_question": "anonymous/atomicity-is-question-judge-balanced",
+    "atomicity_single_focus": "anonymous/atomicity-single-focus-judge-balanced",
+    "atomicity_no_conjunctions": "anonymous/atomicity-no-conjunctions-judge-balanced",
+    "atomicity_verifiable": "anonymous/atomicity-verifiable-judge-balanced",
+    "atomicity_grounded": "anonymous/atomicity-grounded-judge-balanced",
+    "question_answerable": "anonymous/question-judge-balanced",
+    "answer_correctness": "anonymous/answer-judge-balanced",
+    "coverage": "anonymous/coverage-judge-balanced",
 }
 
 JUDGE_MAX_LENGTH = 8192  # matches training-time max_length

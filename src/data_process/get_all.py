@@ -30,14 +30,14 @@ def get_pubmedclaim(splits):
         datasets = []
         ds1 = None
         try:
-            ds1 = load_dataset("umbc-scify/PubMedClaim", "pqa_labeled", split=split)
+            ds1 = load_dataset("anonymous/PubMedClaim", "pqa_labeled", split=split)
             datasets.append(ds1)
         except Exception as e:
             raise RuntimeError(
                 f"Error loading PubMedClaim {split} with pqa_labeled config: {e}"
             )
             pass
-        # ds2 = load_dataset("umbc-scify/PubMedClaim", "pqa_artificial", split=split)
+        # ds2 = load_dataset("anonymous/PubMedClaim", "pqa_artificial", split=split)
         # datasets.append(ds2)
         # ds = concatenate_datasets(datasets)
         ds = ds1
