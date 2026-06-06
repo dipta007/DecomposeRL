@@ -30,8 +30,8 @@ DecomposeRL trains language models to verify factual claims by decomposing them 
 Key contributions:
 - **Iterative decomposition**: the model generates `<question>` / `<answer>` pairs in a thinking loop, then outputs a `<verification>` verdict
 - **Multi-reward GRPO training**: 7 reward signals (format, verification, atomicity, diversity, answerability, correctness, coverage) guide the policy
-- **Tiny judges**: distilled ModernBERT classifiers replace the LLM judge at training time for 100x faster reward computation
-- **10 evaluation datasets**: FEVER, HoVer, WiCE, ClaimDecomp, ExFEVER, PubHealthFact, FoolMeTwice, PubMedClaim, CoverBench, LLMAggreFactt
+- **Tiny judges**: distilled ModernBERT-large classifiers replace the Qwen3-32B LLM judge at training time, cutting judge compute ~80% (240→48 GPU-hours) and running on a single GPU
+- **11 evaluation benchmarks**: FEVER, ClaimDecomp, HoVer, FEVEROUS, WiCE, Ex-FEVER, PubHealthFact, FoolMeTwice, PubMedClaim, CoverBench, LLM-AggreFact
 
 ## Installation
 
@@ -59,7 +59,7 @@ The dataset is hosted on HuggingFace:
 
 | Name | Description |
 |------|-------------|
-| [dipta007/DecomposeRL](https://huggingface.co/datasets/dipta007/DecomposeRL) | Train + 11 test splits across 10 verification datasets |
+| [dipta007/DecomposeRL](https://huggingface.co/datasets/dipta007/DecomposeRL) | Train + 11 test splits across 11 verification benchmarks |
 
 ```python
 from datasets import load_dataset
@@ -81,17 +81,17 @@ Each example contains:
 
 | Split | Dataset | Samples |
 |-------|---------|---------|
-| `test_fever` | FEVER | - |
-| `test_claimdecomp` | ClaimDecomp | - |
-| `test_hover` | HoVer | - |
-| `test_feverous` | FEVEROUS | - |
-| `test_wice` | WiCE | - |
-| `test_ex_fever` | ExFEVER | - |
-| `test_pubhealthfact` | PubHealthFact | - |
-| `test_fool_me_twice` | FoolMeTwice | - |
-| `test_pubmedclaim` | PubMedClaim | - |
-| `test_coverbench` | CoverBench | - |
-| `test_llmaggrefact` | LLMAggreFactt | - |
+| `test_fever` | FEVER | 401 |
+| `test_claimdecomp` | ClaimDecomp | 116 |
+| `test_hover` | HoVer | 4,000 |
+| `test_feverous` | FEVEROUS | 2,962 |
+| `test_wice` | WiCE | 143 |
+| `test_ex_fever` | ExFEVER | 4,071 |
+| `test_pubhealthfact` | PubHealthFact | 985 |
+| `test_fool_me_twice` | FoolMeTwice | 1,380 |
+| `test_pubmedclaim` | PubMedClaim | 445 |
+| `test_coverbench` | CoverBench | 728 |
+| `test_llmaggrefact` | LLM-AggreFact | 29,320 |
 
 ## Models
 
@@ -176,7 +176,7 @@ Environment variables for reward ablations:
 
 ### Tiny Judge
 
-The LLM judge (Qwen3-32B) is accurate but slow. We distill it into small ModernBERT-large classifiers ("tiny judges") — one per reward criterion — that run locally on a single GPU and are ~100x faster.
+The LLM judge (Qwen3-32B) is accurate but dominates training-time GPU cost. We distill it into eight small ModernBERT-large classifiers ("tiny judges") — a ~10x smaller judge stack — that run locally on the same GPU as training, cutting total judge compute by ~80% (240→48 GPU-hours) while retaining ~99% of in-domain accuracy.
 
 **Pre-trained tiny judges** are available on HuggingFace:
 
